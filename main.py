@@ -18,7 +18,20 @@ TEXT = (
 )
 
 
+def _validate(text: str) -> None:
+    """Enforce the competition gate before writing: 1-280 code points,
+    UTF-8, not only whitespace. Fail loudly instead of writing an
+    invalid entry."""
+    points = len(text)
+    if not 1 <= points <= 280:
+        raise ValueError(f"entry text must be 1-280 code points, got {points}")
+    if not text.strip():
+        raise ValueError("entry text must not be only whitespace")
+    text.encode("utf-8")
+
+
 def main() -> None:
+    _validate(TEXT)
     out_dir = Path(os.environ.get("MAKEFUN_OUTPUT_DIR", "/output"))
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "entry.txt").write_text(TEXT, encoding="utf-8")
